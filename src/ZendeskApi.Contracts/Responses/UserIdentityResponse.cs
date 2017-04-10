@@ -4,7 +4,7 @@ using ZendeskApi.Contracts.Models;
 namespace ZendeskApi.Contracts.Responses
 {
     [DataContract]
-    internal class UserIdentityResponse : IResponse<UserIdentity>
+    public class UserIdentityResponse : IResponse<UserIdentity>
     {
         [DataMember(Name = "identity")]
         public UserIdentity Item { get; set; }

@@ -9,5 +9,5 @@ namespace ZendeskApi.Contracts.Models
         string FileName { get; }
 
         Stream InputStream { get; }
-    }
+    }   
 }
