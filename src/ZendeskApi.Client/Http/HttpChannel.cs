@@ -12,7 +12,7 @@ namespace ZendeskApi.Client.Http
 {
     public class HttpChannel : IHttpChannel
     {
-        public async Task<IHttpResponse> GetAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
+        public async Task<IHttpResponse> GetAsync(IHttpRequest request)
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -35,7 +35,7 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public async Task<IHttpResponse> PostAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
+        public async Task<IHttpResponse> PostAsync(IHttpRequest request)
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -59,7 +59,30 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public async Task<IHttpResponse> PutAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
+        public async Task<IHttpResponse> PostAsync(Uri requestUri, IHttpPostedFile file)
+        {
+            using (var client = new HttpClient())
+            {
+                var content = new StreamContent(file.InputStream);
+                IHttpResponse response;
+                try
+                {
+                    var r = await client.PostAsync(requestUri, content);
+                    response = await BuildResponseAsync(r);
+                }
+                catch (HttpRequestException ex)
+                {
+                    response = HandleException(ex);
+                }
+                catch (TaskCanceledException)
+                {
+                    response = HandleTaskCanceledException(client.Timeout);
+                }
+                return response;
+            }
+        }
+
+        public async Task<IHttpResponse> PutAsync(IHttpRequest request)
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -83,7 +106,7 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public async Task<IHttpResponse> DeleteAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
+        public async Task<IHttpResponse> DeleteAsync(IHttpRequest request)
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -181,11 +204,6 @@ namespace ZendeskApi.Client.Http
                     clientTimeout.Milliseconds
                 })
             };
-        }
-
-        public Task<IHttpResponse> PostAsync(IHttpRequest req, IHttpPostedFile file, string clientName, string resourceName, string operation)
-        {
-            throw new NotImplementedException();
         }
     }
 }

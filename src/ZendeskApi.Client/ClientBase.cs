@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ZendeskApi.Client.Http;
@@ -64,15 +65,14 @@ namespace ZendeskApi.Client
         public async Task<T> GetAsync<T>(Uri requestUri, string resource, string operation)
         {
             var request = BuildRequest(requestUri);
-            var response = await _http.GetAsync(request, this.ClientName, resource, operation).ConfigureAwait(false);
+            var response = await _http.GetAsync(request).ConfigureAwait(false);
             ValidateResponse(response);
             return DeserializeContent<T>(response);
         }
 
         public async Task<T> PostFileAsync<T>(Uri requestUri, IHttpPostedFile file, string resource, string operation)
         {
-            var req = BuildRequest(requestUri, file.ContentType);
-            var response = await _http.PostAsync(req, file, this.ClientName, resource, operation);
+            var response = await _http.PostAsync(requestUri, file);
 
             ValidateResponse(response);
 
@@ -82,7 +82,7 @@ namespace ZendeskApi.Client
         public async Task<T> PostAsync<T>(Uri requestUri, object item, string contentType, string resource, string operation)
         {
             var request = BuildRequest(requestUri, item, contentType);
-            var response = await _http.PostAsync(request, this.ClientName, resource, operation).ConfigureAwait(false);
+            var response = await _http.PostAsync(request).ConfigureAwait(false);
             ValidateResponse(response);
             return DeserializeContent<T>(response);
         }
@@ -90,7 +90,7 @@ namespace ZendeskApi.Client
         public async Task<T> PutAsync<T>(Uri requestUri, object item, string contentType, string resource, string operation)
         {
             var request = BuildRequest(requestUri, item, contentType);
-            var response = await _http.PutAsync(request, this.ClientName, resource, operation).ConfigureAwait(false);
+            var response = await _http.PutAsync(request).ConfigureAwait(false);
             ValidateResponse(response);
             return DeserializeContent<T>(response);
         }
@@ -98,7 +98,7 @@ namespace ZendeskApi.Client
         public async Task<T> DeleteAsync<T>(Uri requestUri, object item, string contentType, string resource, string operation)
         {
             var request = BuildRequest(requestUri);
-            var response = await _http.DeleteAsync(request, this.ClientName, resource, operation).ConfigureAwait(false);
+            var response = await _http.DeleteAsync(request).ConfigureAwait(false);
             ValidateResponse(response);
             return DeserializeContent<T>(response);
         }
