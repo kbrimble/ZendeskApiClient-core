@@ -89,7 +89,14 @@ namespace ZendeskApi.Contracts.Queries
         static string GetDescription(Type type)
         {
             var descriptionAttrs = type.GetTypeInfo().GetCustomAttributes(typeof(DescriptionAttribute), false);
-            return descriptionAttrs.Any() ? null : descriptionAttrs.Cast<DescriptionAttribute>().First().Description;
+            if (descriptionAttrs.Any())
+            {
+                var attr = (DescriptionAttribute)descriptionAttrs.First();
+                if (attr == null)
+                    return "";
+                return attr.Description;
+            }
+            return "";
         }
     }
 }
